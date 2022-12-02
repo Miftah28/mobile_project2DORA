@@ -1,103 +1,63 @@
 import 'package:flutter/material.dart';
+import 'pages/people.dart';
+import 'pages/profile.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  const Home({Key? key}) : super(key: key);
 
   @override
-  State<Home> createState() => _HomeState();
+  _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  final ScrollController _homeController = ScrollController();
+  final items = const [
+    Icon(
+      Icons.home,
+      size: 30,
+    ),
+    Icon(
+      Icons.water_drop,
+      size: 30,
+    ),
+    Icon(
+      Icons.bloodtype_sharp,
+      size: 30,
+    ),
+  ];
 
-  Widget _listViewBody() {
-    return ListView.separated(
-        controller: _homeController,
-        itemBuilder: (BuildContext context, int index) {
-          return Center(
-            child: Text(
-              'Item $index',
-            ),
-          );
-        },
-        separatorBuilder: (BuildContext context, int index) => const Divider(
-              thickness: 1,
-            ),
-        itemCount: 20);
-  }
+  int index = 1;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.red,
       appBar: AppBar(
-        title: const Text('BottomNavigationBar Sample'),
+        title: const Text('Curved Navigation Bar'),
         backgroundColor: Colors.red,
       ),
-      body: _listViewBody(),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.water_drop),
-            label: 'Stok Darah',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bloodtype_sharp),
-            label: 'Donor Darah',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
-        onTap: (int index) {
-          switch (index) {
-            case 0:
-              // only scroll to top when current index is selected.
-              if (_selectedIndex == index) {
-                _homeController.animateTo(
-                  0.0,
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.easeOut,
-                );
-              }
-              break;
-            case 1:
-              // only scroll to top when current index is selected.
-              if (_selectedIndex == index) {
-                _homeController.animateTo(
-                  0.0,
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.easeOut,
-                );
-              }
-              break;
-            case 2:
-              // only scroll to top when current index is selected.
-              if (_selectedIndex == index) {
-                _homeController.animateTo(
-                  0.0,
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.easeOut,
-                );
-              }
-              break;
-          }
-          setState(
-            () {
-              _selectedIndex = index;
-            },
-          );
+      bottomNavigationBar: CurvedNavigationBar(
+        items: items,
+        index: index,
+        onTap: (selctedIndex) {
+          setState(() {
+            index = selctedIndex;
+          });
         },
+        height: 70,
+        backgroundColor: Colors.transparent,
+        animationDuration: const Duration(milliseconds: 300),
+        // animationCurve: ,
       ),
+      body: Container(
+          color: Colors.white,
+          width: double.infinity,
+          height: double.infinity,
+          alignment: Alignment.center,
+          child: getSelectedWidget(index: index)),
+          
+          //sidebar
       drawer: Drawer(
-        // Add a ListView to the drawer. This ensures the user can scroll
-        // through the options in the drawer if there isn't enough vertical
-        // space to fit everything.
         child: ListView(
           // Important: Remove any padding from the ListView.
           padding: EdgeInsets.zero,
@@ -153,5 +113,21 @@ class _HomeState extends State<Home> {
         backgroundColor: Colors.red,
       ),
     );
+  }
+
+  Widget getSelectedWidget({required int index}) {
+    Widget widget;
+    switch (index) {
+      case 0:
+        widget = const People();
+        break;
+      case 1:
+        widget = const Profile();
+        break;
+      default:
+        widget = const People();
+        break;
+    }
+    return widget;
   }
 }
